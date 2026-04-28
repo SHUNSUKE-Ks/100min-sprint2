@@ -30,23 +30,26 @@ export function StepContent({ steps, taskId, onCheck }: Props) {
             <div
               onClick={() => onCheck(taskId, step.id)}
               style={{
-                width: '18px',
-                height: '18px',
+                width: '22px',
+                height: '22px',
                 flexShrink: 0,
-                border: `1px solid ${step.checked ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                borderRadius: '3px',
-                backgroundColor: step.checked ? 'var(--color-accent-dim)' : 'transparent',
+                border: `2px solid ${step.checked ? 'var(--color-accent)' : 'var(--color-text-mid)'}`,
+                borderRadius: '5px',
+                backgroundColor: step.checked ? 'var(--color-accent)' : 'var(--color-bg-primary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginTop: '1px',
                 transition: 'border-color 0.15s, background-color 0.15s',
                 cursor: 'pointer',
+                boxShadow: step.checked
+                  ? '0 0 6px rgba(0,212,204,0.4)'
+                  : 'inset 0 1px 3px rgba(0,0,0,0.4)',
               }}
             >
               {step.checked && (
-                <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                  <path d="M1 4L3.5 6.5L9 1" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
+                  <path d="M1 4.5L4.5 8L11 1" stroke="var(--color-bg-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               )}
             </div>
