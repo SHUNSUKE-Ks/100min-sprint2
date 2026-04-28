@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <clipPath id="rounded512">
+      <rect width="512" height="512" rx="112" ry="112"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" ry="112" fill="#0D0F14"/>
+
+  <!-- Subtle inner glow ring (decorative) -->
+  <circle cx="256" cy="234" r="158" fill="none" stroke="#00D4CC" stroke-width="1" opacity="0.08"/>
+
+  <!-- Outer ring track -->
+  <circle cx="256" cy="234" r="148" fill="none" stroke="#1A1D24" stroke-width="14"/>
+
+  <!-- Progress arc ~75% -->
+  <circle cx="256" cy="234" r="148"
+    fill="none"
+    stroke="#00D4CC"
+    stroke-width="14"
+    stroke-linecap="round"
+    stroke-dasharray="699 233"
+    stroke-dashoffset="233"
+    transform="rotate(-90 256 234)"/>
+
+  <!-- Glow end dot -->
+  <circle cx="256" cy="86" r="10" fill="#00D4CC" opacity="0.9" transform="rotate(260 256 234)"/>
+  <circle cx="256" cy="86" r="18" fill="#00D4CC" opacity="0.2" transform="rotate(260 256 234)"/>
+
+  <!-- 100 number -->
+  <text x="256" y="218" text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="100"
+    font-weight="700"
+    fill="#FFFFFF"
+    letter-spacing="-4">100</text>
+
+  <!-- min text -->
+  <text x="256" y="268" text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="36"
+    font-weight="400"
+    fill="#00D4CC"
+    letter-spacing="10">min</text>
+
+  <!-- Bottom badge -->
+  <rect x="140" y="410" width="232" height="52" rx="16" fill="#131620"/>
+  <text x="256" y="444" text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="24"
+    font-weight="500"
+    fill="#555555"
+    letter-spacing="6">SPRINT</text>
+</svg>
