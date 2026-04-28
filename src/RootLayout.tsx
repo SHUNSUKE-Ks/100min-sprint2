@@ -51,7 +51,7 @@ export function RootLayout() {
   const handleNext = () => {
     setShowDone(false)
     reset()
-    navigate('/')
+    navigate('/sprint')
   }
 
   return (
