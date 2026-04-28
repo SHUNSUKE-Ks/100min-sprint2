@@ -64,6 +64,7 @@ export function SplashScreen() {
   const [animProgress, setAnimProgress] = useState(0)
   const [dotActive, setDotActive] = useState(0)
   const [cardsVisible, setCardsVisible] = useState([false, false, false])
+  const [nextButtonVisible, setNextButtonVisible] = useState(false)
   const rafRef = useRef<number | null>(null)
   const dotIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -115,7 +116,7 @@ export function SplashScreen() {
         setTimeout(() => setCardsVisible((p) => [p[0], true, p[2]]), 300)
         setTimeout(() => setCardsVisible((p) => [p[0], p[1], true]), 400)
 
-        setTimeout(() => navigate('/sprint'), 3200)
+        setTimeout(() => setNextButtonVisible(true), 800)
       }
     }
 
@@ -385,6 +386,29 @@ export function SplashScreen() {
             </div>
           ))}
         </div>
+
+        {/* Next button */}
+        <button
+          onClick={() => navigate('/sprint')}
+          style={{
+            position: 'absolute',
+            bottom: '18px',
+            right: '18px',
+            background: 'none',
+            border: 'none',
+            color: nextButtonVisible ? '#00D4CC' : 'transparent',
+            fontSize: '14px',
+            fontFamily: 'var(--font-mono)',
+            cursor: nextButtonVisible ? 'pointer' : 'default',
+            opacity: nextButtonVisible ? 1 : 0,
+            transform: nextButtonVisible ? 'translateX(0)' : 'translateX(40px)',
+            transition: 'opacity 0.4s ease, transform 0.4s ease, color 0.2s ease',
+            letterSpacing: '0.1em',
+            padding: '8px 12px',
+          }}
+        >
+          Next →
+        </button>
       </div>
     </AppShell>
   )
