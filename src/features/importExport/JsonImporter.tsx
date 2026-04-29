@@ -140,7 +140,7 @@ export function JsonImporter() {
             cursor: 'pointer',
           }}
         >
-          JSON をコピー
+          JSON Export
         </button>
         {exported && (
           <pre
