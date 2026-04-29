@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Task } from '../../types/sprint'
 import { StepperItem } from './StepperItem'
 
@@ -14,6 +14,7 @@ export function StepperList({ tasks, onCheck, onCompleteTask, onAllDone }: Props
   const allDone = tasks.every((t) => t.status === 'DONE')
   const itemRefs = useRef<(HTMLDivElement | null)[]>([])
   const prevActiveRef = useRef(activeIndex)
+  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null)
 
   useEffect(() => {
     if (allDone) {
@@ -55,6 +56,8 @@ export function StepperList({ tasks, onCheck, onCompleteTask, onAllDone }: Props
             task={task}
             index={i}
             isActive={i === activeIndex}
+            isExpanded={expandedTaskId === task.id || i === activeIndex}
+            onToggleExpand={() => setExpandedTaskId(expandedTaskId === task.id ? null : task.id)}
             onCheck={onCheck}
             onCompleteTask={onCompleteTask}
           />

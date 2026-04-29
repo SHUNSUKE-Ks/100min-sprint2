@@ -7,11 +7,13 @@ interface Props {
   task: Task
   index: number
   isActive: boolean
+  isExpanded: boolean
+  onToggleExpand: () => void
   onCheck: (taskId: string, stepId: string) => void
   onCompleteTask: (taskId: string) => void
 }
 
-export function StepperItem({ task, index, isActive, onCheck, onCompleteTask }: Props) {
+export function StepperItem({ task, index, isActive, isExpanded, onToggleExpand, onCheck, onCompleteTask }: Props) {
   const isDone = task.status === 'DONE'
 
   const iconBg = isDone
@@ -88,22 +90,51 @@ export function StepperItem({ task, index, isActive, onCheck, onCompleteTask }: 
           transition: 'all 0.2s ease',
         }}
       >
-        {/* ヘッダー行 */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span
-            style={{
-              fontSize: '15px',
-              fontWeight: 600,
-              color: isDone
-                ? 'var(--color-text-mid)'
-                : isActive
-                  ? 'var(--color-accent)'
-                  : 'var(--color-text-mid)',
-              textDecoration: isDone ? 'line-through' : 'none',
-            }}
-          >
-            {task.title}
-          </span>
+        {/* ヘッダー行 - クリック可能 */}
+        <div
+          onClick={onToggleExpand}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            cursor: isDone ? 'default' : 'pointer',
+            transition: 'opacity 0.15s ease',
+            opacity: isDone ? 0.6 : 1,
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
+            <span
+              style={{
+                fontSize: '15px',
+                fontWeight: 600,
+                color: isDone
+                  ? 'var(--color-text-mid)'
+                  : isActive
+                    ? 'var(--color-accent)'
+                    : 'var(--color-text-mid)',
+                textDecoration: isDone ? 'line-through' : 'none',
+                flex: 1,
+                minWidth: 0,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {task.title}
+            </span>
+            {/* Expand indicator */}
+            <span
+              style={{
+                fontSize: '12px',
+                color: isActive ? 'var(--color-accent)' : 'var(--color-text-lo)',
+                transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease, color 0.2s ease',
+                flexShrink: 0,
+              }}
+            >
+              ›
+            </span>
+          </div>
           <span
             style={{
               fontFamily: 'var(--font-mono)',
@@ -129,6 +160,7 @@ export function StepperItem({ task, index, isActive, onCheck, onCompleteTask }: 
                 : isActive
                   ? 'var(--color-accent)'
                   : 'var(--color-text-lo)',
+              flexShrink: 0,
             }}
           >
             {task.status}
@@ -146,9 +178,21 @@ export function StepperItem({ task, index, isActive, onCheck, onCompleteTask }: 
           {task.id.slice(0, 8).toUpperCase()} · 推定 {task.estimate}min
         </div>
 
-        {/* サブステップ（activeのみ展開） */}
-        {isActive && (
-          <div ref={contentRef}>
+        {/* サブステップ（展開時に表示） */}
+        {isExpanded && (
+          <div ref={contentRef} style={{ animation: 'slideDown 0.2s ease' }}>
+            <style>{`
+              @keyframes slideDown {
+                from {
+                  opacity: 0;
+                  max-height: 0;
+                }
+                to {
+                  opacity: 1;
+                  max-height: 500px;
+                }
+              }
+            `}</style>
             <StepContent
               steps={task.steps}
               taskId={task.id}
