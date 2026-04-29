@@ -507,19 +507,21 @@ export function SplashScreen() {
           onClick={() => navigate('/sprint')}
           style={{
             position: 'absolute',
-            bottom: '18px',
-            right: '18px',
-            background: 'none',
-            border: 'none',
+            bottom: '20px',
+            right: '20px',
+            background: nextButtonVisible ? 'rgba(0, 212, 204, 0.1)' : 'transparent',
+            border: `2px solid ${nextButtonVisible ? '#00D4CC' : 'transparent'}`,
             color: nextButtonVisible ? '#00D4CC' : 'transparent',
-            fontSize: '14px',
+            fontSize: '16px',
             fontFamily: 'var(--font-mono)',
             cursor: nextButtonVisible ? 'pointer' : 'default',
             opacity: nextButtonVisible ? 1 : 0,
-            transform: nextButtonVisible ? 'translateX(0)' : 'translateX(40px)',
-            transition: 'opacity 0.4s ease, transform 0.4s ease, color 0.2s ease',
+            transform: nextButtonVisible ? 'translateX(0)' : 'translateX(50px)',
+            transition: 'opacity 0.4s ease, transform 0.4s ease, background 0.2s ease, border-color 0.2s ease',
             letterSpacing: '0.1em',
-            padding: '8px 12px',
+            padding: '12px 16px',
+            borderRadius: '6px',
+            fontWeight: 600,
           }}
         >
           Next →
