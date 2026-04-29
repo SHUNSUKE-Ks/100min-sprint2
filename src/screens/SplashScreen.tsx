@@ -92,11 +92,7 @@ export function SplashScreen() {
   }
 
   useEffect(() => {
-    if (sessionStorage.getItem(SPLASH_KEY)) {
-      navigate('/sprint', { replace: true })
-      return
-    }
-    sessionStorage.setItem(SPLASH_KEY, '1')
+    const startTime = performance.now()
 
     let dotIdx = 0
     dotIntervalRef.current = setInterval(() => {
@@ -122,14 +118,30 @@ export function SplashScreen() {
         setTimeout(() => setCardsVisible((p) => [p[0], p[1], true]), 400)
 
         setTimeout(() => setNextButtonVisible(true), 800)
+
+        // Mark splash as shown after 1 second minimum
+        setTimeout(() => {
+          sessionStorage.setItem(SPLASH_KEY, '1')
+        }, 1000)
       }
     }
 
     rafRef.current = requestAnimationFrame(frame)
 
+    // If already shown, wait at least 1 second before redirecting
+    const checkShown = setTimeout(() => {
+      if (sessionStorage.getItem(SPLASH_KEY)) {
+        // Wait minimum 1 second from start
+        const elapsed = performance.now() - startTime
+        const waitTime = Math.max(0, 1000 - elapsed)
+        setTimeout(() => navigate('/sprint', { replace: true }), waitTime)
+      }
+    }, 0)
+
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
       if (dotIntervalRef.current) clearInterval(dotIntervalRef.current)
+      clearTimeout(checkShown)
     }
   }, [navigate])
 
