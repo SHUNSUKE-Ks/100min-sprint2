@@ -119,21 +119,21 @@ export function SplashScreen() {
 
         setTimeout(() => setNextButtonVisible(true), 800)
 
-        // Mark splash as shown after 1 second minimum
+        // Mark splash as shown after 0.4 second minimum
         setTimeout(() => {
           sessionStorage.setItem(SPLASH_KEY, '1')
-        }, 1000)
+        }, 400)
       }
     }
 
     rafRef.current = requestAnimationFrame(frame)
 
-    // If already shown, wait at least 1 second before redirecting
+    // If already shown, wait at least 0.4 second before redirecting
     const checkShown = setTimeout(() => {
       if (sessionStorage.getItem(SPLASH_KEY)) {
-        // Wait minimum 1 second from start
+        // Wait minimum 0.4 second from start
         const elapsed = performance.now() - startTime
-        const waitTime = Math.max(0, 1000 - elapsed)
+        const waitTime = Math.max(0, 400 - elapsed)
         setTimeout(() => navigate('/sprint', { replace: true }), waitTime)
       }
     }, 0)
