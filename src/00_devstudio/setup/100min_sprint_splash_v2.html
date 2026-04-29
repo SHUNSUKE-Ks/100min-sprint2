@@ -1,0 +1,236 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.splash{
+  width:375px;min-height:680px;
+  background:#0D0F14;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  font-family:'Courier New',monospace;
+  position:relative;overflow:hidden;
+  margin:0 auto;
+}
+.bg-ring{position:absolute;width:320px;height:320px;border-radius:50%;border:1px solid #00D4CC0A;top:42%;left:50%;transform:translate(-50%,-50%);}
+.bg-ring2{position:absolute;width:390px;height:390px;border-radius:50%;border:1px solid #00D4CC04;top:42%;left:50%;transform:translate(-50%,-50%);}
+
+.timer-wrap{position:relative;width:220px;height:220px;margin-bottom:36px;}
+.ring-svg{position:absolute;top:0;left:0;transform:rotate(-90deg);}
+.ring-track{stroke:#1A1D24;stroke-width:5;fill:none;}
+.ring-progress{stroke:#00D4CC;stroke-width:5;fill:none;stroke-linecap:round;stroke-dasharray:604;stroke-dashoffset:604;transition:stroke-dashoffset 0.04s linear;}
+.ring-glow{stroke:#00D4CC;stroke-width:13;fill:none;stroke-linecap:round;stroke-dasharray:604;stroke-dashoffset:604;opacity:0.06;transition:stroke-dashoffset 0.04s linear;}
+.timer-inner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.timer-digits{font-size:42px;font-weight:500;color:#00D4CC;letter-spacing:2px;line-height:1;}
+.colon{animation:blink 1s step-end infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.25}}
+.timer-pct{font-size:12px;color:#444;margin-top:7px;letter-spacing:1px;}
+
+.tasks-area{
+  width:311px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.task-card{
+  background:#0F1117;
+  border:1px solid #1E2128;
+  border-radius:10px;
+  padding:12px 14px;
+  display:flex;align-items:center;gap:11px;
+  cursor:pointer;
+  opacity:0;transform:translateY(14px);
+  transition:opacity 0.38s ease, transform 0.38s ease, border-color 0.18s, background 0.18s;
+}
+.task-card.show{opacity:1;transform:translateY(0);}
+.task-card:hover{border-color:#00D4CC44;background:#111620;}
+.task-card:active{transform:scale(0.985);}
+
+.task-num{
+  width:22px;height:22px;border-radius:5px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;flex-shrink:0;
+}
+.num-done{background:#22C55E18;color:#22C55E;}
+.num-active{background:#00D4CC22;color:#00D4CC;}
+.num-pending{background:#1E2128;color:#444;}
+
+.task-body{flex:1;min-width:0;}
+.task-title{font-size:12px;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0.02em;}
+.task-meta{font-size:10px;color:#3A3D48;margin-top:3px;letter-spacing:0.04em;}
+
+.task-badge{
+  font-size:9px;padding:2px 7px;border-radius:4px;
+  flex-shrink:0;letter-spacing:0.05em;
+}
+.badge-done{background:#22C55E18;color:#22C55E;}
+.badge-active{background:#00D4CC18;color:#00D4CC;}
+.badge-todo{background:#1E2128;color:#444;}
+
+.task-arrow{font-size:11px;color:#2A2D38;flex-shrink:0;}
+
+.dot-row{display:flex;gap:6px;justify-content:center;margin-bottom:28px;opacity:0;transition:opacity 0.4s ease;}
+.dot-row.show{opacity:1;}
+.dot{width:5px;height:5px;border-radius:50%;background:#1E2128;}
+.dot.active{background:#00D4CC;}
+
+.replay-btn{position:absolute;bottom:18px;right:18px;background:transparent;border:none;color:#252830;font-size:11px;font-family:'Courier New',monospace;cursor:pointer;letter-spacing:0.1em;}
+.replay-btn:hover{color:#444;}
+
+.toast{
+  position:absolute;bottom:48px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#131620;border:1px solid #1E2128;border-radius:8px;
+  padding:9px 18px;font-size:11px;color:#00D4CC;
+  white-space:nowrap;letter-spacing:0.05em;
+  opacity:0;transition:opacity 0.25s, transform 0.25s;
+  pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+
+<div class="splash" id="splash">
+  <div class="bg-ring"></div>
+  <div class="bg-ring2"></div>
+
+  <div class="timer-wrap">
+    <svg class="ring-svg" width="220" height="220" viewBox="0 0 220 220">
+      <circle class="ring-track" cx="110" cy="110" r="96"/>
+      <circle class="ring-glow" cx="110" cy="110" r="96" id="ringGlow"/>
+      <circle class="ring-progress" cx="110" cy="110" r="96" id="ringProgress"/>
+    </svg>
+    <div class="timer-inner">
+      <div class="timer-digits">
+        <span id="mm">00</span><span class="colon">:</span><span id="ss">00</span>
+      </div>
+      <div class="timer-pct" id="pct">0%</div>
+    </div>
+  </div>
+
+  <div class="dot-row" id="dotRow">
+    <div class="dot active" id="d0"></div>
+    <div class="dot" id="d1"></div>
+    <div class="dot" id="d2"></div>
+  </div>
+
+  <div class="tasks-area" id="tasksArea">
+    <div class="task-card" id="tc0" onclick="goTask(0)">
+      <div class="task-num num-done">✓</div>
+      <div class="task-body">
+        <div class="task-title">コンポーネント設計</div>
+        <div class="task-meta">TASK_001 · 推定 20min</div>
+      </div>
+      <div class="task-badge badge-done">DONE</div>
+      <div class="task-arrow">›</div>
+    </div>
+    <div class="task-card" id="tc1" onclick="goTask(1)">
+      <div class="task-num num-active">▶</div>
+      <div class="task-body">
+        <div class="task-title">Stepper実装</div>
+        <div class="task-meta">TASK_002 · 推定 40min</div>
+      </div>
+      <div class="task-badge badge-active">DOING</div>
+      <div class="task-arrow" style="color:#00D4CC55;">›</div>
+    </div>
+    <div class="task-card" id="tc2" onclick="goTask(2)">
+      <div class="task-num num-pending">3</div>
+      <div class="task-body">
+        <div class="task-title">Timer store 接続</div>
+        <div class="task-meta">TASK_003 · 推定 30min</div>
+      </div>
+      <div class="task-badge badge-todo">TODO</div>
+      <div class="task-arrow">›</div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <button class="replay-btn" onclick="replay()">↺ replay</button>
+</div>
+
+<script>
+const C = 2 * Math.PI * 96;
+const TARGET_ELAPSED = 42 * 60 + 30;
+const TOTAL = 100 * 60;
+const TARGET_PCT = TARGET_ELAPSED / TOTAL;
+
+const ring = document.getElementById('ringProgress');
+const glow = document.getElementById('ringGlow');
+const mm = document.getElementById('mm');
+const ss = document.getElementById('ss');
+const pct = document.getElementById('pct');
+const dotRow = document.getElementById('dotRow');
+const dots = [0,1,2].map(i => document.getElementById('d'+i));
+const cards = [0,1,2].map(i => document.getElementById('tc'+i));
+const toast = document.getElementById('toast');
+
+const TASK_LABELS = ['コンポーネント設計','Stepper実装','Timer store 接続'];
+
+let rafId, dotInterval, dotIdx=0;
+
+ring.style.strokeDasharray = C;
+ring.style.strokeDashoffset = C;
+glow.style.strokeDasharray = C;
+glow.style.strokeDashoffset = C;
+
+function setRing(p){
+  const off = C*(1-p);
+  ring.style.strokeDashoffset = off;
+  glow.style.strokeDashoffset = off;
+}
+function setTime(elapsed){
+  const rem = TOTAL - elapsed;
+  mm.textContent = String(Math.floor(rem/60)).padStart(2,'0');
+  ss.textContent = String(rem%60).padStart(2,'0');
+  pct.textContent = Math.round(elapsed/TOTAL*100)+'%';
+}
+function animDots(){
+  dots.forEach(d=>d.classList.remove('active'));
+  dots[dotIdx%3].classList.add('active');
+  dotIdx++;
+}
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'), 1800);
+}
+function goTask(i){
+  const labels = ['DONE — 完了済みタスクです','▶ DOING — Stepperを開きます','TODO — このタスクを開始しますか？'];
+  showToast(labels[i]);
+}
+
+function startAnimation(){
+  const dur = 2000;
+  const t0 = performance.now();
+  dotInterval = setInterval(animDots, 260);
+
+  function frame(now){
+    const t = Math.min((now-t0)/dur, 1);
+    const e = t<0.5? 2*t*t : -1+(4-2*t)*t;
+    setTime(Math.round(e*TARGET_ELAPSED));
+    setRing(e*TARGET_PCT);
+    if(t<1){ rafId=requestAnimationFrame(frame); }
+    else{
+      clearInterval(dotInterval);
+      dots.forEach((d,i)=>d.classList.toggle('active',i===2));
+      dotRow.classList.add('show');
+      cards.forEach((c,i)=>{
+        setTimeout(()=>c.classList.add('show'), 180 + i*110);
+      });
+    }
+  }
+  rafId = requestAnimationFrame(frame);
+}
+
+function replay(){
+  cancelAnimationFrame(rafId);
+  clearInterval(dotInterval);
+  dotIdx=0;
+  ring.style.transition='none'; glow.style.transition='none';
+  setRing(0); setTime(0);
+  dotRow.classList.remove('show');
+  cards.forEach(c=>c.classList.remove('show'));
+  dots.forEach((d,i)=>d.classList.toggle('active',i===0));
+  setTimeout(()=>{
+    ring.style.transition='stroke-dashoffset 0.04s linear';
+    glow.style.transition='stroke-dashoffset 0.04s linear';
+    startAnimation();
+  },100);
+}
+
+startAnimation();
+</script>
