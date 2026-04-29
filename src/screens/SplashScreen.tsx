@@ -65,6 +65,7 @@ export function SplashScreen() {
   const [dotActive, setDotActive] = useState(0)
   const [cardsVisible, setCardsVisible] = useState([false, false, false])
   const [nextButtonVisible, setNextButtonVisible] = useState(false)
+  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null)
   const rafRef = useRef<number | null>(null)
   const dotIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -79,6 +80,10 @@ export function SplashScreen() {
 
   const handleCardTap = (task: Task) => {
     if (task.status === 'DONE') return
+    setExpandedTaskId(expandedTaskId === task.id ? null : task.id)
+  }
+
+  const handleEnterApp = (task: Task) => {
     if (task.status === 'DOING') {
       navigate(`/task/${task.id}`)
     } else if (task.status === 'TODO') {
@@ -290,101 +295,199 @@ export function SplashScreen() {
             width: '311px',
           }}
         >
-          {displayTasks.map((task, idx) => (
-            <div
-              key={task.id}
-              onClick={() => handleCardTap(task)}
-              style={{
-                backgroundColor: '#0F1117',
-                border: '1px solid #1E2128',
-                borderRadius: 'var(--radius-md)',
-                padding: '12px 14px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '11px',
-                cursor: task.status === 'DONE' ? 'default' : 'pointer',
-                opacity: cardsVisible[idx]
-                  ? task.status === 'DONE'
-                    ? 0.45
-                    : 1
-                  : task.status === 'DONE'
-                    ? 0.45
-                    : 0,
-                transform: cardsVisible[idx] ? 'translateY(0)' : 'translateY(14px)',
-                transition: 'opacity 0.38s ease, transform 0.38s ease, border-color 0.18s, background 0.18s',
-                pointerEvents: task.status === 'DONE' ? 'none' : 'auto',
-              }}
-            >
-              {/* Status icon */}
+          {displayTasks.map((task, idx) => {
+            const isExpanded = expandedTaskId === task.id
+            return (
               <div
+                key={task.id}
                 style={{
-                  width: '22px',
-                  height: '22px',
-                  borderRadius: '5px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  backgroundColor:
-                    task.status === 'DONE'
-                      ? '#22C55E18'
-                      : task.status === 'DOING'
-                        ? '#00D4CC22'
-                        : '#1E2128',
+                  backgroundColor: '#0F1117',
+                  border: '1px solid #1E2128',
+                  borderRadius: 'var(--radius-md)',
+                  overflow: 'hidden',
+                  opacity: cardsVisible[idx]
+                    ? task.status === 'DONE'
+                      ? 0.45
+                      : 1
+                    : task.status === 'DONE'
+                      ? 0.45
+                      : 0,
+                  transform: cardsVisible[idx] ? 'translateY(0)' : 'translateY(14px)',
+                  transition: 'opacity 0.38s ease, transform 0.38s ease',
+                  pointerEvents: task.status === 'DONE' ? 'none' : 'auto',
                 }}
               >
-                {task.status !== 'TODO' ? (
-                  <StatusIcon status={task.status} />
-                ) : (
-                  <div style={{ color: '#444444', fontSize: '10px', fontWeight: 700 }}>
-                    {idx + 1}
+                {/* Card header */}
+                <div
+                  onClick={() => handleCardTap(task)}
+                  style={{
+                    padding: '12px 14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '11px',
+                    cursor: task.status === 'DONE' ? 'default' : 'pointer',
+                    transition: 'background-color 0.15s ease',
+                  }}
+                >
+                  {/* Status icon */}
+                  <div
+                    style={{
+                      width: '22px',
+                      height: '22px',
+                      borderRadius: '5px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      backgroundColor:
+                        task.status === 'DONE'
+                          ? '#22C55E18'
+                          : task.status === 'DOING'
+                            ? '#00D4CC22'
+                            : '#1E2128',
+                    }}
+                  >
+                    {task.status !== 'TODO' ? (
+                      <StatusIcon status={task.status} />
+                    ) : (
+                      <div style={{ color: '#444444', fontSize: '10px', fontWeight: 700 }}>
+                        {idx + 1}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Title and meta */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#cccccc',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        letterSpacing: '0.02em',
+                        fontFamily: 'var(--font-mono)',
+                      }}
+                    >
+                      {task.title}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '10px',
+                        color: '#3A3D48',
+                        marginTop: '3px',
+                        letterSpacing: '0.04em',
+                        fontFamily: 'var(--font-mono)',
+                      }}
+                    >
+                      {task.id} · 推定 {task.estimate}min
+                    </div>
+                  </div>
+
+                  {/* Badge */}
+                  <StatusBadge status={task.status} />
+
+                  {/* Expand indicator */}
+                  <div
+                    style={{
+                      fontSize: '11px',
+                      color: isExpanded ? '#00D4CC' : task.status === 'DOING' ? '#00D4CC' : '#2A2D38',
+                      flexShrink: 0,
+                      transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.2s ease, color 0.2s ease',
+                    }}
+                  >
+                    ›
+                  </div>
+                </div>
+
+                {/* Steps panel */}
+                {isExpanded && (
+                  <div
+                    style={{
+                      borderTop: '1px solid #1E2128',
+                      padding: '8px 12px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '6px',
+                      backgroundColor: 'rgba(0, 212, 204, 0.03)',
+                      animation: 'slideDown 0.2s ease',
+                    }}
+                  >
+                    <style>{`
+                      @keyframes slideDown {
+                        from {
+                          opacity: 0;
+                          max-height: 0;
+                        }
+                        to {
+                          opacity: 1;
+                          max-height: 200px;
+                        }
+                      }
+                    `}</style>
+                    {task.steps.map((step) => (
+                      <div
+                        key={step.id}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: '8px',
+                          fontSize: '11px',
+                          color: step.checked ? '#22C55E' : '#999999',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            minWidth: '16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: `1px solid ${step.checked ? '#22C55E' : '#444444'}`,
+                            borderRadius: '3px',
+                            marginTop: '2px',
+                            backgroundColor: step.checked ? '#22C55E18' : 'transparent',
+                          }}
+                        >
+                          {step.checked && (
+                            <span style={{ color: '#22C55E', fontSize: '10px' }}>✓</span>
+                          )}
+                        </div>
+                        <span
+                          style={{
+                            textDecoration: step.checked ? 'line-through' : 'none',
+                            letterSpacing: '0.02em',
+                          }}
+                        >
+                          {step.label}
+                        </span>
+                      </div>
+                    ))}
+                    {/* Enter button */}
+                    <button
+                      onClick={() => handleEnterApp(task)}
+                      style={{
+                        marginTop: '6px',
+                        padding: '6px 10px',
+                        fontSize: '10px',
+                        background: 'transparent',
+                        border: '1px solid #00D4CC44',
+                        borderRadius: '4px',
+                        color: '#00D4CC',
+                        cursor: 'pointer',
+                        fontFamily: 'var(--font-mono)',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      Enter →
+                    </button>
                   </div>
                 )}
               </div>
-
-              {/* Title and meta */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
-                    fontSize: '12px',
-                    color: '#cccccc',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    letterSpacing: '0.02em',
-                    fontFamily: 'var(--font-mono)',
-                  }}
-                >
-                  {task.title}
-                </div>
-                <div
-                  style={{
-                    fontSize: '10px',
-                    color: '#3A3D48',
-                    marginTop: '3px',
-                    letterSpacing: '0.04em',
-                    fontFamily: 'var(--font-mono)',
-                  }}
-                >
-                  {task.id} · 推定 {task.estimate}min
-                </div>
-              </div>
-
-              {/* Badge */}
-              <StatusBadge status={task.status} />
-
-              {/* Arrow */}
-              <div
-                style={{
-                  fontSize: '11px',
-                  color: task.status === 'DOING' ? '#00D4CC' : '#2A2D38',
-                  flexShrink: 0,
-                }}
-              >
-                ›
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         {/* Next button */}
