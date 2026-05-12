@@ -21,7 +21,7 @@ export function MiniForgeView() {
 
   const { entries: htmlEntries, add: addHtml } = useHtmlRegistry()
   const { entries: archiveEntries, add: addToArchive, remove: removeArchive } = useArchive()
-  const { drafts, save: saveDraft, toggleFavorite } = useDrafts()
+  const { drafts, save: saveDraft, toggleFavorite, rename: renameDraft } = useDrafts()
 
   const handleExport = useCallback(
     (filename: string, data: unknown) => {
@@ -123,6 +123,7 @@ export function MiniForgeView() {
             onSave={handleSave}
             drafts={drafts}
             onFavorite={toggleFavorite}
+            onRename={renameDraft}
           />
         )}
         {tab === 'archive' && (

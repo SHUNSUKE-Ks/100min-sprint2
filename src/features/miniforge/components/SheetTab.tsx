@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { Plus, FolderOpen } from 'lucide-react'
+import { Plus, FolderOpen, BookOpen } from 'lucide-react'
 import { SaveSlotPanel } from './SaveSlotPanel'
+import { DictModal } from './DictModal'
 import type { HtmlEntry } from '../types'
 import type { DraftEntry } from '../hooks/useDrafts'
 
@@ -11,11 +12,13 @@ interface Props {
   onSave: (data: unknown) => void
   drafts: DraftEntry[]
   onFavorite: (id: string) => void
+  onRename: (id: string, newLabel: string) => void
 }
 
-export function SheetTab({ entries, onRegister, onExport, onSave, drafts, onFavorite }: Props) {
+export function SheetTab({ entries, onRegister, onExport, onSave, drafts, onFavorite, onRename }: Props) {
   const [selectedId, setSelectedId] = useState<string>(entries[0]?.id ?? '')
   const [showSlots, setShowSlots] = useState(false)
+  const [showDict, setShowDict] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
   const selected = entries.find((e) => e.id === selectedId) ?? entries[0]
@@ -102,45 +105,72 @@ export function SheetTab({ entries, onRegister, onExport, onSave, drafts, onFavo
         >
           TEMPLATE
         </span>
-        <button
-          onClick={() => setShowSlots(true)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px',
-            background: 'none',
-            border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-sm)',
-            color: drafts.length > 0 ? 'var(--color-accent)' : 'var(--color-text-lo)',
-            cursor: 'pointer',
-            padding: '4px 10px',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '10px',
-            fontWeight: 700,
-            letterSpacing: '0.06em',
-          }}
-          aria-label="セーブスロットを開く"
-        >
-          <FolderOpen size={13} />
-          LOAD
-          {drafts.length > 0 && (
-            <span
-              style={{
-                backgroundColor: 'var(--color-accent)',
-                color: '#000',
-                borderRadius: '9999px',
-                fontSize: '9px',
-                fontWeight: 700,
-                padding: '0 5px',
-                lineHeight: '14px',
-                minWidth: '16px',
-                textAlign: 'center',
-              }}
-            >
-              {drafts.length}
-            </span>
-          )}
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          {/* 辞書ボタン */}
+          <button
+            onClick={() => setShowDict(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              background: 'none',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-sm)',
+              color: 'var(--color-text-lo)',
+              cursor: 'pointer',
+              padding: '4px 10px',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '10px',
+              fontWeight: 700,
+              letterSpacing: '0.06em',
+            }}
+            aria-label="辞書を開く"
+          >
+            <BookOpen size={13} />
+            DICT
+          </button>
+
+          {/* ロードボタン */}
+          <button
+            onClick={() => setShowSlots(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              background: 'none',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-sm)',
+              color: drafts.length > 0 ? 'var(--color-accent)' : 'var(--color-text-lo)',
+              cursor: 'pointer',
+              padding: '4px 10px',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '10px',
+              fontWeight: 700,
+              letterSpacing: '0.06em',
+            }}
+            aria-label="セーブスロットを開く"
+          >
+            <FolderOpen size={13} />
+            LOAD
+            {drafts.length > 0 && (
+              <span
+                style={{
+                  backgroundColor: 'var(--color-accent)',
+                  color: '#000',
+                  borderRadius: '9999px',
+                  fontSize: '9px',
+                  fontWeight: 700,
+                  padding: '0 5px',
+                  lineHeight: '14px',
+                  minWidth: '16px',
+                  textAlign: 'center',
+                }}
+              >
+                {drafts.length}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* ギャラリー */}
@@ -222,7 +252,11 @@ export function SheetTab({ entries, onRegister, onExport, onSave, drafts, onFavo
         drafts={drafts}
         onFavorite={onFavorite}
         onLoad={handleLoad}
+        onRename={onRename}
       />
+
+      {/* 辞書モーダル */}
+      <DictModal open={showDict} onClose={() => setShowDict(false)} />
     </div>
   )
 }

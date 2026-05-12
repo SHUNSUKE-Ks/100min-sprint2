@@ -1,4 +1,5 @@
-import { Star, Upload } from 'lucide-react'
+import { useState } from 'react'
+import { Star, Upload, Pencil } from 'lucide-react'
 import { BottomSheet } from '../../../components/ui/BottomSheet'
 import type { DraftEntry } from '../hooks/useDrafts'
 
@@ -16,6 +17,7 @@ interface Props {
   drafts: DraftEntry[]
   onFavorite: (id: string) => void
   onLoad: (draft: DraftEntry) => void
+  onRename: (id: string, newLabel: string) => void
 }
 
 function ProgressBar({ value }: { value: number }) {
@@ -58,8 +60,21 @@ function ProgressBar({ value }: { value: number }) {
   )
 }
 
-export function SaveSlotPanel({ open, onClose, drafts, onFavorite, onLoad }: Props) {
+export function SaveSlotPanel({ open, onClose, drafts, onFavorite, onLoad, onRename }: Props) {
   const emptyCount = MAX_SLOTS - drafts.length
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editValue, setEditValue] = useState('')
+
+  const startEdit = (draft: DraftEntry) => {
+    setEditingId(draft.id)
+    setEditValue(draft.label)
+  }
+
+  const commitEdit = (id: string) => {
+    const trimmed = editValue.trim()
+    if (trimmed) onRename(id, trimmed)
+    setEditingId(null)
+  }
 
   return (
     <BottomSheet open={open} onClose={onClose} title="Save Slots">
@@ -105,29 +120,69 @@ export function SaveSlotPanel({ open, onClose, drafts, onFavorite, onLoad }: Pro
               }}
               aria-label={draft.isFavorite ? 'お気に入り解除' : 'お気に入りに追加'}
             >
-              <Star
-                size={16}
-                fill={draft.isFavorite ? '#f59e0b' : 'none'}
-              />
+              <Star size={16} fill={draft.isFavorite ? '#f59e0b' : 'none'} />
             </button>
 
             {/* ラベル・進捗 */}
             <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  color: 'var(--color-text-hi)',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {draft.isFavorite && (
-                  <span style={{ color: '#f59e0b', marginRight: '4px' }}>★</span>
-                )}
-                {draft.label}
-              </div>
+              {/* ラベル行 */}
+              {editingId === draft.id ? (
+                <input
+                  autoFocus
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onBlur={() => commitEdit(draft.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') commitEdit(draft.id)
+                    if (e.key === 'Escape') setEditingId(null)
+                  }}
+                  style={{
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: 'var(--color-text-hi)',
+                    background: 'var(--color-bg-surface)',
+                    border: '1px solid var(--color-accent)',
+                    borderRadius: '4px',
+                    padding: '2px 6px',
+                    outline: 'none',
+                    width: '100%',
+                    fontFamily: 'inherit',
+                  }}
+                />
+              ) : (
+                <button
+                  onClick={() => startEdit(draft)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'text',
+                    textAlign: 'left',
+                    minWidth: 0,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      color: 'var(--color-text-hi)',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {draft.isFavorite && (
+                      <span style={{ color: '#f59e0b', marginRight: '4px' }}>★</span>
+                    )}
+                    {draft.label}
+                  </span>
+                  <Pencil size={10} style={{ color: 'var(--color-text-lo)', flexShrink: 0 }} />
+                </button>
+              )}
+
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span
                   style={{
@@ -140,7 +195,7 @@ export function SaveSlotPanel({ open, onClose, drafts, onFavorite, onLoad }: Pro
                     flexShrink: 0,
                   }}
                 >
-                  v{draft.schemaVersion}
+                  {draft.schemaVersion}
                 </span>
                 <ProgressBar value={draft.progress} />
                 <span

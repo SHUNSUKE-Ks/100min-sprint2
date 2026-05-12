@@ -20,7 +20,9 @@ const scenarioSheetV11 = `<!DOCTYPE html>
   </style>
 </head>
 <body>
-  <h1>TRPG風 Scenario Sheet</h1>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+    <span style="font-family:monospace;font-size:10px;background:#3a6df022;color:#3a6df0;border:1px solid #3a6df055;border-radius:9999px;padding:3px 10px;letter-spacing:0.08em">SC_ver1.1</span>
+  </div>
   <section class="sheet-card">
     <h2>世界観</h2>
     <label>世界名</label>
@@ -46,6 +48,7 @@ const scenarioSheetV11 = `<!DOCTYPE html>
   <script>
     function exportJSON() {
       const data = {
+        meta: { schema_version: "SC_ver1.1" },
         world: { name: document.getElementById("worldName").value, problem: document.getElementById("worldProblem").value },
         character: { name: document.getElementById("characterName").value, goal: document.getElementById("characterGoal").value },
         systems: document.getElementById("systems").value
@@ -178,9 +181,12 @@ const novelSheetV21 = `<!DOCTYPE html>
 <body>
 
 <header class="sheet-header">
-  <div style="display:flex;align-items:center;gap:8px">
-    <span style="font-size:18px">🎭</span>
-    <span class="sheet-title">ノベルゲーム生成シート v2.1</span>
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:18px">🎭</span>
+      <span class="sheet-title">ノベルゲーム生成シート v2.1</span>
+    </div>
+    <span style="font-family:monospace;font-size:9px;background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent);border-radius:9999px;padding:2px 8px;letter-spacing:0.08em;flex-shrink:0">NV_ver2.1</span>
   </div>
   <div class="prog-row">
     <div class="prog-track"><div class="prog-fill" id="pFill" style="width:0%"></div></div>
@@ -301,7 +307,7 @@ const novelSheetV21 = `<!DOCTYPE html>
   function collect() {
     const sys = [...document.querySelectorAll('#sysGrid input:checked')].map(c => c.value);
     return {
-      meta: { schema_version:'2.1', label:g('metaLabel'), id:g('metaId'), memo:g('metaMemo'), created_at: new Date().toISOString() },
+      meta: { schema_version:'NV_ver2.1', label:g('metaLabel'), id:g('metaId'), memo:g('metaMemo'), created_at: new Date().toISOString() },
       world: { name:g('wName'), civilization:g('wCiv'), power:g('wPower'), taboo:g('wTaboo'), problem:g('wProblem') },
       characters: [
         { characterID:'CHAR_001', role:'protagonist', name:g('c1Name'), purpose:g('c1Purpose'), fear:g('c1Fear'), flaw:g('c1Flaw'), fight_reason:g('c1Fight') },
@@ -482,9 +488,12 @@ const eventSheetV11 = `<!DOCTYPE html>
 <body>
 
 <header class="sheet-header">
-  <div style="display:flex;align-items:center;gap:8px">
-    <span style="font-size:18px">🎬</span>
-    <span class="sheet-title">イベントシート v1.1</span>
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:18px">🎬</span>
+      <span class="sheet-title">イベントシート v1.1</span>
+    </div>
+    <span style="font-family:monospace;font-size:9px;background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent);border-radius:9999px;padding:2px 8px;letter-spacing:0.08em;flex-shrink:0">EV_ver1.1</span>
   </div>
   <div class="prog-row">
     <div class="prog-track"><div class="prog-fill" id="pFill" style="width:0%"></div></div>
@@ -672,7 +681,7 @@ const eventSheetV11 = `<!DOCTYPE html>
     var creation = [];
     document.querySelectorAll('#creationChips .chip.on input').forEach(function(cb){ creation.push(cb.value); });
     return {
-      meta: { schema_version:'event-1.1', title: g('subtitle') || 'イベントシート', created_at: new Date().toISOString() },
+      meta: { schema_version:'EV_ver1.1', title: g('subtitle') || 'イベントシート', created_at: new Date().toISOString() },
       basic: { chapter: g('chapter'), subtitle: g('subtitle'), location_time: g('locationTime') },
       characters: chars,
       structure: { summary: g('summary'), hook: g('hook'), main: g('main'), climax: g('climax'), ending: g('ending') },

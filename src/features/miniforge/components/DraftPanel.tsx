@@ -132,7 +132,7 @@ export function DraftPanel({ drafts, onRemove }: Props) {
                     letterSpacing: '0.06em',
                   }}
                 >
-                  v{draft.schemaVersion}
+                  {draft.schemaVersion}
                 </span>
                 <span
                   style={{

@@ -108,5 +108,15 @@ export function useDrafts() {
     })
   }
 
-  return { drafts, save, remove, toggleFavorite }
+  const rename = (id: string, newLabel: string) => {
+    setDrafts((prev) => {
+      const updated = prev.map((e) =>
+        e.id === id ? { ...e, label: newLabel } : e
+      )
+      persist(updated)
+      return updated
+    })
+  }
+
+  return { drafts, save, remove, toggleFavorite, rename }
 }
