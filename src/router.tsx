@@ -4,6 +4,7 @@ import { SprintBoard } from './screens/SprintBoard'
 import { SummaryView } from './screens/SummaryView'
 import { SettingsScreen } from './screens/SettingsScreen'
 import { SplashScreen } from './screens/SplashScreen'
+import { MiniForgeScreen } from './screens/MiniForgeScreen'
 
 export const router = createBrowserRouter([
   { path: '/', element: <SplashScreen /> },
@@ -14,6 +15,7 @@ export const router = createBrowserRouter([
       { path: '/task/:id', element: <SprintBoard /> },
       { path: '/summary', element: <SummaryView /> },
       { path: '/settings', element: <SettingsScreen /> },
+      { path: '/miniforge', element: <MiniForgeScreen /> },
     ],
   },
 ])

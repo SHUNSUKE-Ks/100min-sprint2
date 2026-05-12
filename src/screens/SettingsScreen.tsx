@@ -95,6 +95,26 @@ export function SettingsScreen() {
             <Toggle checked={vibrateOnStart} onChange={toggleVibrate} />
           </SettingRow>
 
+          <SettingRow label="MiniForge">
+            <button
+              onClick={() => navigate('/miniforge')}
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '10px',
+                fontWeight: 700,
+                color: 'var(--color-accent)',
+                background: 'none',
+                border: '1px solid var(--color-accent)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '3px 10px',
+                cursor: 'pointer',
+                letterSpacing: '0.08em',
+              }}
+            >
+              OPEN →
+            </button>
+          </SettingRow>
+
           <div
             style={{
               marginTop: '24px',

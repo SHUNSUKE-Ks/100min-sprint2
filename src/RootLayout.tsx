@@ -6,6 +6,8 @@ import { AdFooter } from './components/layout/AdFooter'
 import { SprintDonePopup } from './components/sprint/SprintDonePopup'
 import { useTimerStore } from './store/timerStore'
 import { useSprintStore } from './store/sprintStore'
+import { useAppStore } from './store/appStore'
+import { MiniForgeView } from './views/MiniForgeView'
 
 export function RootLayout() {
   const navigate = useNavigate()
@@ -38,6 +40,7 @@ export function RootLayout() {
     }
   }, [elapsed, activeSprint, sprints, pause, completeSprint])
 
+  const activeApp = useAppStore((s) => s.activeApp)
   const currentSprint = sprints.find((s) => s.sprintId === activeSprint)
 
   const handleSprintDone = () => {
@@ -64,9 +67,16 @@ export function RootLayout() {
           padding: '16px',
           display: 'flex',
           flexDirection: 'column',
+          /* モバイル縦画面: 幅を制限しない */
+          width: '100%',
+          boxSizing: 'border-box',
         }}
       >
-        <Outlet context={{ onSprintDone: handleSprintDone }} />
+        {activeApp === 'miniforge' ? (
+          <MiniForgeView />
+        ) : (
+          <Outlet context={{ onSprintDone: handleSprintDone }} />
+        )}
       </main>
       <AdFooter />
 

@@ -1,6 +1,6 @@
 import type { ValidationResult } from './types'
 
-export type ValidatorFn<T> = (data: unknown, index?: number) => string | null
+export type ValidatorFn<_T> = (data: unknown, index?: number) => string | null
 
 export interface ValidatorConfig<T> {
   validate: ValidatorFn<T>
